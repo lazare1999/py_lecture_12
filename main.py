@@ -54,7 +54,13 @@ app = FastAPI()
 
 
 @app.get("/")
-def index():
+def index(authorize: AuthJWT = Depends()):
+    try:
+        authorize.jwt_required()
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
     return {"message": "Hello"}
 
 
@@ -74,7 +80,13 @@ def create_user(user: User):
 
 # getting all users
 @app.get('/users', response_model=List[User])
-def get_users():
+def get_users(authorize: AuthJWT = Depends()):
+    try:
+        authorize.jwt_required()
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
     return users
 
 
